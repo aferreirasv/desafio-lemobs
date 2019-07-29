@@ -13,13 +13,21 @@ module.exports = {
 	notas_media: notasMedia
 };
 
-function valida_cpf(req, res, next) {
-	let cpfNum = parsecpfin(req.body.cpf)
-	let cpf_valido = validarcpf(cpfNum)
-	if (!cpf_valido) {
-		return res.sendStatus(400)
+async function valida_cpf(req, res, next) {
+	try {
+		let cpfNum = parsecpfin(req.body.cpf)
+		let cpfDuplicado = await db.Aluno.findOne({ where: { cpf: cpfNum } })
+		console.log(cpfDuplicado)
+		if (cpfDuplicado) return res.status(400).json({"error":{"message":"CPF cadastrado já existe no banco."}})
+		let cpf_valido = validarcpf(cpfNum)
+		if (!cpf_valido) {
+			return res.status(400).json({"error":{"message":"CPF Inválido."}})
+		}
+		return next()
+	} catch (err) {
+		console.error(err)
+		res.sendStatus(500)
 	}
-	return next()
 }
 
 async function cadastrarAluno(req, res) {
