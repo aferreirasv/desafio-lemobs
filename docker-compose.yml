@@ -1,0 +1,32 @@
+version: "3.4"
+services:
+  app:
+    build:
+      context: .
+    command: npm run dev
+    ports:
+      - 3000:3000
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+      - DB_USER=root
+      - DB_PASSWORD=root
+      - DB_NAME=desafio_db
+      - DB_HOST=db
+    links:
+      - db
+
+  db:
+    image: postgres
+    restart: always
+    volumes:
+      - ./.pgdata:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_USER=root
+      - POSTGRES_DB=desafio_db
+    ports:
+      - 5432:5432
