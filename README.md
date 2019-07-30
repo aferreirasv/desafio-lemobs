@@ -13,5 +13,5 @@ A porta padrão do servidor em ambiente de desenvolvimento é a **:3000**, poden
 Foram implementados testes unitários para as funções de validar e formatar CPF. Basta rodar o script do npm:
 `npm test`
 
-#Documentação
+# Documentação
 Uma vez que o servidor tenha sido inicializado corretamente, a documentação gerada pelo swagger pode ser encontrada na rota raiz **(ex.:http://localhost:3000/)** da aplicação.
