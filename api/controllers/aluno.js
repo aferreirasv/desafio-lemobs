@@ -1,5 +1,5 @@
 const db = require('../../db')
-const validarCpf = require('../lib/validar-cpf')
+const validarCpf = require('../lib/valida-cpf')
 const parseCpfIn = require('../lib/parse-cpf-in')
 const parseCpfOut = require('../lib/parse-cpf-out')
 module.exports = {
@@ -16,12 +16,12 @@ module.exports = {
 async function valida_cpf(req, res, next) {
 	try {
 		let cpfNum = parseCpfIn(req.body.cpf)
-		if (!cpfNum) return res.status(400).json({"error":{"message":"CPF Inválido."}})
+		if (!cpfNum) return res.status(400).json({ "error": { "message": "CPF Inválido." } })
 		let cpfDuplicado = await db.Aluno.findOne({ where: { cpf: cpfNum } })
-		if (cpfDuplicado) return res.status(400).json({"error":{"message":"CPF cadastrado já existe no banco."}})
+		if (cpfDuplicado) return res.status(400).json({ "error": { "message": "CPF cadastrado já existe no banco." } })
 		let cpf_valido = validarCpf(cpfNum)
 		if (!cpf_valido) {
-			return res.status(400).json({"error":{"message":"CPF Inválido."}})
+			return res.status(400).json({ "error": { "message": "CPF Inválido." } })
 		}
 		return next()
 	} catch (err) {

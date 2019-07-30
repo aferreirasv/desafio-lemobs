@@ -1,11 +1,9 @@
-module.exports = (aluno)=>{
+module.exports = (aluno) => {
     let strCPF = aluno.cpf
-    console.log(aluno)
-    console.log(strCPF)
     if (typeof strCPF == 'number') strCPF = strCPF.toString()
     let cpfArr = strCPF.split('')
-    let resultArr = cpfArr.map((el, ind)=>{
-        switch(ind){
+    let resultArr = cpfArr.map((el, ind) => {
+        switch (ind) {
             case 2:
                 return el + '.'
             case 5:
@@ -14,7 +12,7 @@ module.exports = (aluno)=>{
                 return el + '-'
             default:
                 return el
-        }   
+        }
 
     })
     aluno.cpf = resultArr.join('')
