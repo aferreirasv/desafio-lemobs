@@ -1,7 +1,7 @@
 const db = require('../../db')
-const validarcpf = require('../lib/validar-cpf')
-const parsecpfin = require('../lib/parse-cpf-in')
-const parsecpfout = require('../lib/parse-cpf-out')
+const validarCpf = require('../lib/validar-cpf')
+const parseCpfIn = require('../lib/parse-cpf-in')
+const parseCpfOut = require('../lib/parse-cpf-out')
 module.exports = {
 	cadastrar_aluno: cadastrarAluno,
 	editar_aluno: editarAluno,
@@ -15,11 +15,11 @@ module.exports = {
 
 async function valida_cpf(req, res, next) {
 	try {
-		let cpfNum = parsecpfin(req.body.cpf)
+		let cpfNum = parseCpfIn(req.body.cpf)
+		if (!cpfNum) return res.status(400).json({"error":{"message":"CPF Inválido."}})
 		let cpfDuplicado = await db.Aluno.findOne({ where: { cpf: cpfNum } })
-		console.log(cpfDuplicado)
 		if (cpfDuplicado) return res.status(400).json({"error":{"message":"CPF cadastrado já existe no banco."}})
-		let cpf_valido = validarcpf(cpfNum)
+		let cpf_valido = validarCpf(cpfNum)
 		if (!cpf_valido) {
 			return res.status(400).json({"error":{"message":"CPF Inválido."}})
 		}
@@ -34,7 +34,7 @@ async function cadastrarAluno(req, res) {
 	let aluno = {
 		"nome": req.body.nome,
 		"data_nascimento": req.body.data_nascimento,
-		"cpf": parsecpfin(req.body.cpf),
+		"cpf": parseCpfIn(req.body.cpf),
 		"nota": req.body.nota
 	}
 	try {
@@ -68,7 +68,7 @@ async function obterAluno(req, res) {
 	try {
 		let aluno = await db.Aluno.findByPk(req.params.id)
 		if (!aluno) return res.sendStatus(404)
-		aluno = parsecpfout(aluno)
+		aluno = parseCpfOut(aluno)
 		return res.status(200).json(aluno)
 	} catch (err) {
 		console.error(err)
@@ -79,7 +79,7 @@ async function obterAluno(req, res) {
 async function obterAlunos(req, res) {
 	try {
 		const alunos = await db.Aluno.findAll()
-		return res.status(200).json(alunos.map(parsecpfout))
+		return res.status(200).json(alunos.map(parseCpfOut))
 	} catch (err) {
 		console.error(err)
 		return res.sendStatus(500)
@@ -121,7 +121,7 @@ async function notasCriterio(req, res) {
 				return res.sendStatus(400)
 		}
 		const alunos = await db.Aluno.findAll({ where })
-		return res.status(200).json(alunos.map(parsecpfout))
+		return res.status(200).json(alunos.map(parseCpfOut))
 	} catch (err) {
 		console.error(err)
 		return res.sendStatus(500)
@@ -140,7 +140,7 @@ async function notasMedia(req, res) {
 		})
 		let media = soma / notas.length
 		let alunosFiltrados = alunos.filter((aluno) => { return aluno.nota > media })
-		return res.status(200).json(alunosFiltrados.map(parsecpfout))
+		return res.status(200).json(alunosFiltrados.map(parseCpfOut))
 	} catch (err) {
 		console.error(err)
 		return res.sendStatus(500)
